@@ -10,6 +10,7 @@ ENV SINUS_USER="3000" \
     TS3_DIR="$SINUS_DIR/TeamSpeak3-Client-linux_amd64" \
     SINUS_VERSION="0.9.12.3-36fce3c" \
     YTDL_VERSION="latest" \
+    SSL_LIBS_VERSION="3.0" \
     TS3_VERSION="3.0.19.4" \
     TS3_OFFSET="25000"
 
@@ -28,7 +29,10 @@ RUN groupadd -g 3000 sinusbot && \
 
 RUN wget -qO- "https://www.sinusbot.com/pre/sinusbot-$SINUS_VERSION.tar.bz2" | \
     tar -xjf- -C "$SINUS_DIR"
-
+    
+RUN wget -qO- "https://dl.sinusbot.com/ffmpeg-$SSL_LIBS_VERSION-ssl.tar.bz2" | \
+    tar -xjf- -C "$SINUS_DIR"
+    
 RUN wget -q -O- "http://dl.4players.de/ts/releases/$TS3_VERSION/TeamSpeak3-Client-linux_amd64-$TS3_VERSION.run" | \
     tail -c +$TS3_OFFSET | \
     tar xzf - -C "$TS3_DIR"
