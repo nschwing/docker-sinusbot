@@ -50,7 +50,7 @@ RUN groupadd -g "$SINUS_GROUP" sinusbot && \
     apt-get -q clean all && \
     rm -rf /tmp/* /var/tmp/*
 
-ADD entrypoint.sh /entrypoint.sh
+COPY entrypoint.sh /entrypoint.sh
 
 VOLUME ["$SINUS_DATA", "$SINUS_DATA_SCRIPTS"]
 
