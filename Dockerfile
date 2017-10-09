@@ -1,8 +1,10 @@
-FROM ubuntu:yakkety
+FROM ubuntu:xenial
 
 MAINTAINER Alexander Trost <galexrt@googlemail.com>
 
-ENV SINUS_USER="3000" \
+ENV LANG="en_US.UTF-8" \
+    LC_ALL="en_US.UTF-8 " \
+    SINUS_USER="3000" \
     SINUS_GROUP="3000" \
     SINUS_DIR="/sinusbot" \
     YTDL_BIN="/usr/local/bin/youtube-dl" \
@@ -22,10 +24,11 @@ RUN groupadd -g "$SINUS_GROUP" sinusbot && \
     apt-get -q upgrade -y && \
     apt-get -q install -y x11vnc xvfb libxcursor1 ca-certificates bzip2 \
         libglib2.0-0 libnss3 locales wget sudo python less && \
-    update-ca-certificates && \
+    locale-gen --purge "$LANG" && \
+    update-locale LANG="$LANG" && \
     echo "LC_ALL=en_US.UTF-8" >> /etc/default/locale && \
     echo "LANG=en_US.UTF-8" >> /etc/default/locale && \
-    locale-gen --purge en_US.UTF-8 && \
+    update-ca-certificates && \
     mkdir -p "$SINUS_DIR" && \
     wget -qO- "$SINUSBOT_DL_URL" | \
     tar -xjf- -C "$SINUS_DIR" && \
