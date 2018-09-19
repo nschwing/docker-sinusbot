@@ -10,10 +10,9 @@ ENV LANG="en_US.UTF-8" \
     YTDL_BIN="/usr/local/bin/youtube-dl" \
     YTDL_VERSION="latest" \
     SSL_LIBS_VERSION="3.0" \
-    TS3_VERSION="3.1.8" \
+    TS3_VERSION="3.2.1" \
     TS3_DL_ADDRESS="http://dl.4players.de/ts/releases/" \
     SINUSBOT_DL_URL="https://www.sinusbot.com/pre/sinusbot-0.13.37-f7e9ece.tar.bz2"
-    # Current "stable" Sinusbot download: https://www.sinusbot.com/dl/sinusbot.current.tar.bz2
 
 ENV SINUS_DATA="$SINUS_DIR/data" \
     SINUS_DATA_SCRIPTS="$SINUS_DIR/scripts" \
@@ -35,6 +34,7 @@ RUN groupadd -g "$SINUS_GROUP" sinusbot && \
     wget -qO- "$SINUSBOT_DL_URL" | \
     tar -xjf- -C "$SINUS_DIR" && \
     mv "$SINUS_DATA_SCRIPTS" "$SINUS_DATA_SCRIPTS-orig" && \
+    mkdir -p "$SINUS_CONFIG" "$SINUS_DATA_SCRIPTS" && \
     cp -f "$SINUS_DIR/config.ini.dist" "$SINUS_DIR/config.ini" && \
     sed -i 's|^DataDir.*|DataDir = '"$SINUS_DATA"'|g' "$SINUS_DIR/config.ini" && \
 	wget -qO- "https://dl.sinusbot.com/ffmpeg-$SSL_LIBS_VERSION-ssl.tar.bz2" | \
@@ -47,7 +47,7 @@ RUN groupadd -g "$SINUS_GROUP" sinusbot && \
     yes | "./TeamSpeak3-Client-linux_amd64-$TS3_VERSION.run" && \
     rm -f "TeamSpeak3-Client-linux_amd64-$TS3_VERSION.run" && \
     rm TeamSpeak3-Client-linux_amd64/xcbglintegrations/libqxcb-glx-integration.so && \
-    mkdir TeamSpeak3-Client-linux_amd64/plugins && \
+    mkdir -p TeamSpeak3-Client-linux_amd64/plugins && \
     cp -f "$SINUS_DIR/plugin/libsoundbot_plugin.so" "$TS3_DIR/plugins/" && \
     sed -i "s|^TS3Path.*|TS3Path = \"$TS3_DIR/ts3client_linux_amd64\"|g" "$SINUS_DIR/config.ini" && \
     wget -q -O "$YTDL_BIN" "https://yt-dl.org/downloads/$YTDL_VERSION/youtube-dl" && \
@@ -62,6 +62,7 @@ COPY entrypoint.sh /entrypoint.sh
 COPY youtube-dl-speedpatched /usr/local/bin/youtube-dl-speedpatched
 
 USER sinusbot
+WORKDIR "$SINUS_DIR"
 
 VOLUME ["$SINUS_DATA", "$SINUS_DATA_SCRIPTS", "$SINUS_CONFIG"]
 
